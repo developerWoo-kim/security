@@ -1,0 +1,106 @@
+spring:
+  profiles:
+    group:
+      "local": "local,common"
+      "dev": "dev,common"
+      "prod": "prod,common"
+
+---
+# ?? ?? ??
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/dpcms
+    username: root
+    password: '0000'
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        #show_sql: true # ??? ??? ??
+        format_sql: true
+        default_batch_fetch_size: 1000
+        dialect: org.hibernate.dialect.H2Dialect
+    open-in-view: false # OSIV ??
+
+---
+
+# ??
+spring:
+  config:
+    activate:
+      on-profile: "common"
+  thymeleaf:
+    cache: false
+  devtools:
+    restart:
+      enabled: true
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+
+
+server:
+  port: 8080
+  error:
+    include-exception: false
+    include-stacktrace: never # ?? ??? stacktrace ??? ??? ? ??
+
+logging:
+  level:
+    root: WARN
+
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+
+security:
+  ## ?? ???
+  session:
+    use: true
+    max-count: 1
+
+  ## ?? ???
+  remember-me:
+    use: false
+    expire:
+      seconds: 2629800
+
+  ## ???? ??
+  credentials-expired:
+    use: true
+    redirect: /credentialExpired
+    month: 1
+    data:
+
+  ## ???
+  login:
+    uri: /login
+    param:
+      id: memberId
+      pwd: memberPassword
+    process:
+      uri: /loginProcess
+    success:
+      redirect-uri: /
+    fail:
+      imsi-lock:
+        use: true
+        recount:
+          use: true
+          recount:
+            use: false
+            max-minute: 1
+        max-count: 5
+        lock-minute: 30
+
+
+  ## ?? ??
+  signup:
+    uri: /signip
+
+
