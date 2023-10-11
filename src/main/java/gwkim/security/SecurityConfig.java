@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
@@ -41,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public HttpAccessDeniedHandler accessDeniedHandler() {
         HttpAccessDeniedHandler httpAccessDeniedHandler = new HttpAccessDeniedHandler();
         httpAccessDeniedHandler.setErrorURL("/author/denied");
-        return new HttpAccessDeniedHandler();
+        return httpAccessDeniedHandler;
     }
 
     @Bean
@@ -53,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public DaoAuthenticationProvider authenticationProvider() {
         CustomAuthenticationProvider provider = new CustomAuthenticationProvider();
         provider.setUserDetailsService(customUserDetailsService);
-        provider.setPasswordEncoder(new BCryptPasswordEncoder());
+        provider.setPasswordEncoder(new MessageDigestPasswordEncoder("SHA-256"));
         provider.setPreAuthenticationChecks(preUserDetailsChecker());
         provider.setPostAuthenticationChecks(new UserDetailsChecker() {
             @Override
@@ -79,7 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/", "/index", "/login", "/login_proc","/author/denied", "/author/unauthorized").permitAll()
+                .antMatchers("/", "/index", "/login", "/login-error", "/login_proc","/author/denied", "/author/unauthorized").permitAll()
                 .anyRequest().access("@authorizationChecker.check(request, authentication)");
 
         http

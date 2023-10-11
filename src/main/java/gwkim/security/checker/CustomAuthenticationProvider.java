@@ -53,7 +53,9 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
             Assert.notNull(user, "retrieveUser returned null - a violation of the interface contract");
         }
         try {
+            // 승인, 휴면, 계정 만료, 락, 비활성화 체크
             super.getPreAuthenticationChecks().check(user);
+            // 비밀번호 체크
             additionalAuthenticationChecks(user, (UsernamePasswordAuthenticationToken) authentication);
         }
         catch (AuthenticationException ex) {

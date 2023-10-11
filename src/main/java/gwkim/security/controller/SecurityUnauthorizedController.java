@@ -12,12 +12,12 @@ public class SecurityUnauthorizedController {
 
     @RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
     public String unauthorizedHtml() {
-        return "401";
+        return "login";
     }
 
     @RequestMapping
     public ResponseEntity<String> unauthorized() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요한 서비스입니다.");
     }
 
 }
