@@ -5,10 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +20,16 @@ public class Member {
     private String memberName;          // 사용자명
     private String memberPassword;      // 사용자 비밀번호
 
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private MemberType memberType;
+
     @JsonIgnore
     @OneToMany(mappedBy = "member")
     private List<AuthorMember> authorMemberList = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "member")
+    private List<AuthorGroupMember> authorGroupMemberList = new ArrayList<>();
+
+    private LocalDate passwordUpdateDate;
 }

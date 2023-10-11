@@ -58,49 +58,71 @@ logging:
     org.springframework.web: INFO
     org.springframework.security: INFO
 
+# Spring Security
 security:
   ## ?? ???
   session:
     use: true
+    ### ?? ?? ???
     max-count: 1
 
   ## ?? ???
   remember-me:
     use: false
+    ### ????? ????(n? ?? ??)
     expire:
       seconds: 2629800
 
   ## ???? ??
   credentials-expired:
     use: true
+    ### ???? ?? ? ????? uri
     redirect: /credentialExpired
+    ### ???? ???? (?,?)
     month: 1
     data:
+
+  ## ????
+  signup:
+    uri: /signup
+    process:
+      uri: /signupProcess
 
   ## ???
   login:
     uri: /login
+    ### form ????
     param:
       id: memberId
       pwd: memberPassword
     process:
       uri: /loginProcess
+    ### ??? ?? ? ????? uri
     success:
       redirect-uri: /
     fail:
-      imsi-lock:
+      imsi-lock: # ???? ???? ?? ??
         use: true
         recount:
           use: true
-          recount:
-            use: false
-            max-minute: 1
-        max-count: 5
-        lock-minute: 30
+          max-minute: 1 # ?? ?? ??
+        max-count: 5 # ?? ?? ??
+        lock-minute: 30 # ???? ?? ?? ? ??? ??? ??
+      redirect-uri:
+        default: ${security.login.uri}?error=true
+        notApprove:
+        inactive:
+        userNotFound:
+        badCredentials:
+  ## ????
+  logout:
+    uri: /logout
+  permitAll: >
+    ${security.login.uri},
+    ${security.login.process.uri},
+    ${security.signup.uri},
+    ${security.signup.process.uri}
+  
 
-
-  ## ?? ??
-  signup:
-    uri: /signip
 
 
