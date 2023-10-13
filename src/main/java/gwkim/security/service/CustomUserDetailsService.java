@@ -42,6 +42,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         Member member = memberRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException("아이디 또는 비밀번호를 잘못 입력하셨습니다.\n입력하신 내용을 다시 확인해주세요."));
+
+        // 2023.10.11 : 현 개발 시점에서 엔티티를 직접 사용해도 되는지 의문이 듭니다.
         // < ================ 권한 세팅 ================
         List<AuthorGroupMember> authorGroupMemberList = member.getAuthorGroupMemberList();
         for (AuthorGroupMember authorGroupMember : authorGroupMemberList) {
@@ -63,21 +65,30 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         MemberType memberType = member.getMemberType();
         MemberStatus memberStatus = memberType.getMemberStatus(); // 계정 상태
+        LoginPreventStatus loginPreventStatus = member.getLoginPreventStatus(); // 로그인 방지 상태
+
+        if(memberStatus == MemberStatus.ACTIVE) {
+            switch (loginPreventStatus) {
+                case LOCKED:
+                    accountNonLocked = false;
+                    break;
+                default:
+                    break;
+            }
+        }
 
         // 비밀번호 만료일 체크
         if(credentialsExpiredUse) {
             credentialsNonExpired = this.checkCredentialsNonExpired(member.getPasswordUpdateDate());
         }
+
         // ================ 계정 상태 ================ > //
 
         // < ================ UserDetails 세팅 ================
-        //
+
         CustomUserDetails userDetails = new CustomUserDetails(member.getMemberId(), member.getMemberPassword(), enabled, true,
                 credentialsNonExpired, accountNonLocked, authorList);
-
-
         userDetails.setMember(member);
-
         return userDetails;
     }
 

@@ -28,6 +28,16 @@ public class CustomUserDetails extends User {
         this.initStatus();
     }
 
+    /**
+     * Constructor
+     * @param username 회원 아이디
+     * @param password 회원 비밀번호
+     * @param enabled 비활성화
+     * @param accountNonExpired ? 필요 한가????
+     * @param credentialsNonExpired 비밀번호 만료X
+     * @param accountNonLocked 비밀번호 잠김X
+     * @param authorities 권한
+     */
     public CustomUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,
                              boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);

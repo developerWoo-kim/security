@@ -19,7 +19,9 @@ public class Member {
     private String memberId;            // 아이디
     private String memberName;          // 사용자명
     private String memberPassword;      // 사용자 비밀번호
-
+    private int loginCnt;               // 로그인 시도 횟수
+    @Enumerated(EnumType.STRING)
+    private LoginPreventStatus loginPreventStatus;
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MemberType memberType;
 
@@ -32,4 +34,16 @@ public class Member {
     private List<AuthorGroupMember> authorGroupMemberList = new ArrayList<>();
 
     private LocalDate passwordUpdateDate;
+
+    /**
+     * 로그인 시도 횟수 증가
+     */
+    public void incrementLoginFailCount() {
+        this.loginCnt++;
+    }
+
+    /**
+     * 로그인 시도 횟수 초기화
+     */
+    public void resetLoginFailCount() { this.loginCnt = 0; }
 }

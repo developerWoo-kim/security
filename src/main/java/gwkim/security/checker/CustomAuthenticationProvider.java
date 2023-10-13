@@ -35,10 +35,8 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
                 () -> this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.onlySupports",
                         "Only UsernamePasswordAuthenticationToken is supported"));
         String username = authentication.getName();
-        boolean cacheWasUsed = true;
         UserDetails user = super.getUserCache().getUserFromCache(username);
         if (user == null) {
-            cacheWasUsed = false;
             try {
                 user = retrieveUser(username, (UsernamePasswordAuthenticationToken) authentication);
             }
@@ -59,24 +57,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
             additionalAuthenticationChecks(user, (UsernamePasswordAuthenticationToken) authentication);
         }
         catch (AuthenticationException ex) {
-            if (!cacheWasUsed) {
                 throw ex;
-            }
-            // There was a problem, so try again after checking
-            // we're using latest data (i.e. not from the cache)
-            cacheWasUsed = false;
-            user = retrieveUser(username, (UsernamePasswordAuthenticationToken) authentication);
-
-            // 승인, 휴면, 계정 만료, 락, 비활성화 체크
-            super.getPreAuthenticationChecks().check(user);
-
-            // 비밀번호 체크
-            additionalAuthenticationChecks(user, (UsernamePasswordAuthenticationToken) authentication);
-        }
-        super.getPreAuthenticationChecks().check(user);
-
-        if (!cacheWasUsed) {
-            super.getUserCache().putUserInCache(user);
         }
         Object principalToReturn = user;
         if (super.isForcePrincipalAsString()) {
