@@ -3,6 +3,7 @@ package gwkim.security.custom;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gwkim.security.domain.AuthorGroup;
 import gwkim.security.domain.dto.AuthorGroupDto;
+import gwkim.security.domain.dto.AuthorGroupMemberDto;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -12,9 +13,9 @@ public class CustomGrantedAuthority implements GrantedAuthority {
 
     @Getter
     private final AuthorGroupDto authorGroup;
-    public CustomGrantedAuthority(AuthorGroupDto authorGroup) {
-        this.groupName = authorGroup.getAuthorGroupName();
-        this.authorGroup = authorGroup;
+    public CustomGrantedAuthority(AuthorGroupMemberDto authorGroupMemberDto) {
+        this.groupName = authorGroupMemberDto.getAuthorGroup().getAuthorGroupName();
+        this.authorGroup = authorGroupMemberDto.getAuthorGroup();
     }
     @JsonIgnore
     @Override

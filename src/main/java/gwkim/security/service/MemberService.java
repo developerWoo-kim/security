@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -39,5 +42,17 @@ public class MemberService {
         Member member = memberRepository.findById(memberId).orElseThrow();
         // 로그인 시도 횟수 초기화
         member.resetLoginFailCount();
+    }
+
+    /**
+     * 회원 그룹 권한 가져오기
+     * @param memberId String : 회원 아이디
+     * @return List<Long> : AuthorGroupId
+     */
+    public List<Long> getMemberAuthority(String memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow();
+        return member.getAuthorGroupMemberList().stream()
+                .map(s -> s.getAuthorGroup().getAuthorGroupId())
+                .collect(Collectors.toList());
     }
 }

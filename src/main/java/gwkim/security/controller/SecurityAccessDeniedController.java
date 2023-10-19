@@ -7,14 +7,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/author")
+@RequestMapping("/author/denied")
 public class SecurityAccessDeniedController {
-    @RequestMapping(name = "/denied",produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
     public String failedSecureHtml() {
         return "403";
     }
 
-    @RequestMapping(name = "/denied")
+    @RequestMapping
     public ResponseEntity<String> failedSecure() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }

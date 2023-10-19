@@ -132,7 +132,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/", "/index", "/login", "/login-error",
-                        "/login_proc","/author/denied", "/author/unauthorized").permitAll()
+                        "/login_proc","/author/denied", "/author/unauthorized", "/cp/error").permitAll()
                 .anyRequest().access("@authorizationChecker.check(request, authentication)");
 
         // 권한 없는 사용자에 대한 예외 처리

@@ -23,6 +23,6 @@ public class Menu {
     private String menuUrl;         // 메뉴 url
 
     @JsonIgnore
-    @OneToMany(mappedBy = "menuManage", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AuthorMenu> authorMenuList = new ArrayList<>();    // 메뉴 권한
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AuthorGroupMenu> authorGroupMenuList = new ArrayList<>();    // 메뉴 권한
 }
