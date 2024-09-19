@@ -7,6 +7,20 @@ server:
 logging.level:
   org.hibernate.SQL: trace
 
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          naver:
+            client-id: 'dgCCTwG3qUzHml2wciNo'
+            client-secret: 'r0TKELK5BX'
+            client-name: '네이버'
+            redirect-uri: {baseUrl}/login/oauth2/code/naver
+            client-authentication-method: client_secret_get
+            authorization-grant-type: authorization_code
+
 jwt:
   secret-key: 'fa5e2d1c7e68b4173f7099a756a243d2b84e3a3d1c4b6f0ed9e4bebf4682d22f'
   refresh-token-expiration-millis: 31536000000 #86400000

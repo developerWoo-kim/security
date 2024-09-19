@@ -1,5 +1,8 @@
-package com.gwkim.security.oauth2;
+package com.gwkim.security.oauth2.core.config;
 
+import com.gwkim.security.oauth2.core.exception.CustomAccessDeniedHandler;
+import com.gwkim.security.oauth2.core.exception.CustomAuthenticationEntryPoint;
+import com.gwkim.security.oauth2.core.userdetails.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -46,6 +50,7 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // 1. 기본 설정
         http
                 .headers(httpSecurityHeadersConfigurer ->
                         httpSecurityHeadersConfigurer.frameOptions(
@@ -61,5 +66,25 @@ public class SecurityConfig {
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 사용 안함
                 );
+
+        // 2. oauth2 로그인 설정
+        http
+                .oauth2Login(httpSecurityOAuth2LoginConfigurer ->
+                        httpSecurityOAuth2LoginConfigurer
+                                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
+                                        .userService(customOAuth2UserService))
+                );
+
+        // 2. 필터 설정 (custom jwt filter)
+
+        // 2. 인증(authentication) & 인가(authorization) 예외 핸들링
+        http
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())   // 인증
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())             // 인가
+                );
+
+
+        return http.build();
     }
 }

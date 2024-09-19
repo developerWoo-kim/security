@@ -1,7 +1,7 @@
 package com.gwkim.security.basic.core.filter;
 
-import com.gwkim.security.basic.core.exception.JwtTokenExceptionTypes;
-import com.gwkim.security.basic.core.exception.custom.AccessTokenNotFound;
+import com.gwkim.security.basic.core.response.exception.JwtTokenExceptionTypes;
+import com.gwkim.security.basic.core.response.exception.custom.AccessTokenNotFound;
 import com.gwkim.security.basic.core.jwt.JwtTokenProvider;
 import com.gwkim.security.basic.core.userdetails.CustomUserDetails;
 import io.jsonwebtoken.Claims;
@@ -11,7 +11,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

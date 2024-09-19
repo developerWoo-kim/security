@@ -1,8 +1,7 @@
-package com.gwkim.security.basic.core.handler;
+package com.gwkim.security.oauth2.core.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gwkim.security.basic.core.response.SecurityError;
-import com.gwkim.security.basic.core.response.SecurityErrorResponse;
+import com.gwkim.security.oauth2.core.response.SecurityErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
@@ -10,6 +9,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
+
+import static com.gwkim.security.oauth2.core.response.SecurityError.CMM_AUTH_ROLE_NOT_FOUND;
 
 
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
@@ -19,14 +20,11 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
             throws IOException {
         ObjectMapper om = new ObjectMapper();
 
-        SecurityErrorResponse commonErrorResponse = SecurityErrorResponse.builder()
-                .code(SecurityError.CMM_AUTH_ROLE_NOT_FOUND.getCode())
-                .message(SecurityError.CMM_AUTH_ROLE_NOT_FOUND.getMessage())
-                .path(request.getRequestURI())
-                .build();
+        SecurityErrorResponse commonErrorResponse = new SecurityErrorResponse(CMM_AUTH_ROLE_NOT_FOUND.getCode(), CMM_AUTH_ROLE_NOT_FOUND.getMessage(), request.getRequestURI());
+
 
         response.setCharacterEncoding("utf-8");
-        response.setStatus(SecurityError.CMM_AUTH_ROLE_NOT_FOUND.getStatus().value());
+        response.setStatus(CMM_AUTH_ROLE_NOT_FOUND.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter()
                 .write(om.writeValueAsString(commonErrorResponse));

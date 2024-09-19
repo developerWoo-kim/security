@@ -1,8 +1,8 @@
 package com.gwkim.security.basic.core.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.neoclue.adruck.api.common.security.core.exception.AuthenticationExceptionTypes;
-import com.neoclue.adruck.global.utils.code.error.GlobalErrorResponse;
+import com.gwkim.security.basic.core.response.SecurityErrorResponse;
+import com.gwkim.security.basic.core.response.exception.AuthenticationExceptionTypes;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,7 +31,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 
         ObjectMapper om = new ObjectMapper();
 
-        GlobalErrorResponse commonErrorResponse = GlobalErrorResponse.builder()
+        SecurityErrorResponse commonErrorResponse = SecurityErrorResponse.builder()
                 .code(exceptionTypes.getCode())
                 .message(exceptionTypes.getMessage())
                 .path(request.getRequestURI())

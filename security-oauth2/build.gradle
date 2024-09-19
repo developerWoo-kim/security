@@ -3,8 +3,11 @@ bootJar.enabled = true
 jar.enabled = false
 
 dependencies {
+    implementation project(':security-utils')
+
     runtimeOnly 'com.h2database:h2'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
     // jwt 토큰 라이브러리
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'

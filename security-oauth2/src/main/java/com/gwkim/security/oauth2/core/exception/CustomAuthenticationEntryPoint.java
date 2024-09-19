@@ -1,8 +1,8 @@
-package com.gwkim.security.basic.core.handler;
+package com.gwkim.security.oauth2.core.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gwkim.security.basic.core.response.SecurityErrorResponse;
-import com.gwkim.security.basic.core.response.exception.AuthenticationExceptionTypes;
+import com.gwkim.security.oauth2.core.response.SecurityErrorResponse;
+import com.gwkim.security.oauth2.core.response.exception.AuthenticationExceptionTypes;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,6 +13,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 
 import java.io.IOException;
 
+import static com.gwkim.security.oauth2.core.response.SecurityError.CMM_AUTH_ROLE_NOT_FOUND;
+
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
@@ -20,11 +22,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         ObjectMapper om = new ObjectMapper();
 
-        SecurityErrorResponse commonErrorResponse = SecurityErrorResponse.builder()
-                .code(exceptionTypes.getCode())
-                .message(exceptionTypes.getMessage())
-                .path(request.getRequestURI())
-                .build();
+        SecurityErrorResponse commonErrorResponse = new SecurityErrorResponse(CMM_AUTH_ROLE_NOT_FOUND.getCode(), CMM_AUTH_ROLE_NOT_FOUND.getMessage(), request.getRequestURI());
 
         response.setCharacterEncoding("utf-8");
         response.setStatus(HttpStatus.FORBIDDEN.value());

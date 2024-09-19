@@ -1,4 +1,4 @@
-package com.gwkim.security.basic.core.exception;
+package com.gwkim.security.oauth2.core.response.exception;
 
 import lombok.Getter;
 
@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.neoclue.adruck.global.utils.code.error.GlobalError.*;
+import static com.gwkim.security.oauth2.core.response.SecurityError.*;
 
 @Getter
 public enum AuthenticationExceptionTypes {

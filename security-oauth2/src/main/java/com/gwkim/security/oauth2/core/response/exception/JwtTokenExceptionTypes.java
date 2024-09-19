@@ -1,6 +1,6 @@
-package com.gwkim.security.basic.core.exception;
+package com.gwkim.security.oauth2.core.response.exception;
 
-import com.neoclue.adruck.global.utils.code.error.GlobalError;
+import com.gwkim.security.oauth2.core.response.SecurityError;
 import lombok.Getter;
 
 import java.util.Collections;
@@ -12,15 +12,15 @@ import java.util.stream.Stream;
 
 @Getter
 public enum JwtTokenExceptionTypes {
-    MalformedJwtException(GlobalError.CMM_AUTH_TOKEN_MALFORMED),
-    ExpiredJwtException(GlobalError.CMM_AUTH_TOKEN_EXPIRED),
-    UnsupportedJwtException(GlobalError.CMM_AUTH_TOKEN_UNSUPPORTED),
-    IllegalArgumentException(GlobalError.CMM_AUTH_TOKEN_ILLEGAL_ARGUMENT),
-    SignatureException(GlobalError.CMM_AUTH_TOKEN_ILLEGAL_ARGUMENT);
+    MalformedJwtException(SecurityError.CMM_AUTH_TOKEN_MALFORMED),
+    ExpiredJwtException(SecurityError.CMM_AUTH_TOKEN_EXPIRED),
+    UnsupportedJwtException(SecurityError.CMM_AUTH_TOKEN_UNSUPPORTED),
+    IllegalArgumentException(SecurityError.CMM_AUTH_TOKEN_ILLEGAL_ARGUMENT),
+    SignatureException(SecurityError.CMM_AUTH_TOKEN_ILLEGAL_ARGUMENT);
 
-    private final GlobalError error;
+    private final SecurityError error;
 
-    JwtTokenExceptionTypes(GlobalError error) {
+    JwtTokenExceptionTypes(SecurityError error) {
         this.error = error;
     }
 
