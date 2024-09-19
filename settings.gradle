@@ -1,0 +1,4 @@
+rootProject.name = 'security'
+include 'security-basic'
+include 'security-oauth2'
+
