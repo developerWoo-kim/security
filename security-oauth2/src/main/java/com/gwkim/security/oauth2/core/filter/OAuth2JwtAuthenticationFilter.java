@@ -3,7 +3,7 @@ package com.gwkim.security.oauth2.core.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gwkim.security.oauth2.core.authentication.dto.OAuth2LoginDto;
 import com.gwkim.security.oauth2.core.authentication.userdetails.CustomOAuth2AuthenticationToken;
-import com.gwkim.security.oauth2.core.authentication.userdetails.OAuth2User;
+import com.gwkim.security.oauth2.core.authentication.userdetails.CustomOAuth2User;
 import com.gwkim.security.oauth2.core.filter.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,15 +27,18 @@ import java.util.Map;
 
 public class OAuth2JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/login", "POST");
+    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public OAuth2JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+    public OAuth2JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
+        this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public OAuth2JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
+    public OAuth2JwtAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationManager authenticationManager1, JwtTokenProvider jwtTokenProvider) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER, authenticationManager);
+        this.authenticationManager = authenticationManager1;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -56,7 +59,9 @@ public class OAuth2JwtAuthenticationFilter extends AbstractAuthenticationProcess
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("id", "test001");
-        CustomOAuth2AuthenticationToken authenticationToken = new CustomOAuth2AuthenticationToken(new OAuth2User(attributes, "key"));
+        CustomOAuth2User key = new CustomOAuth2User(attributes, "key");
+        CustomOAuth2AuthenticationToken authenticationToken = new CustomOAuth2AuthenticationToken(key);
+        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 
 
 

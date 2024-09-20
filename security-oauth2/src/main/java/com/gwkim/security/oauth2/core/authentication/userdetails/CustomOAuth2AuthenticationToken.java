@@ -8,10 +8,10 @@ import java.io.Serial;
 public class CustomOAuth2AuthenticationToken extends AbstractAuthenticationToken {
     @Serial
     private static final long serialVersionUID = 720L;
-    private final OAuth2User principal;
+    private final CustomOAuth2User principal;
 
-    public CustomOAuth2AuthenticationToken(OAuth2User principal) {
-        super(authorities);
+    public CustomOAuth2AuthenticationToken(CustomOAuth2User principal) {
+        super(null);
         Assert.notNull(principal, "principal cannot be null");
         this.principal = principal;
         this.setAuthenticated(true);

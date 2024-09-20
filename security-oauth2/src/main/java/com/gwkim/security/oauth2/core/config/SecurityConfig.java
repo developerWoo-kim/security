@@ -1,6 +1,7 @@
 package com.gwkim.security.oauth2.core.config;
 
 import com.gwkim.security.oauth2.core.authentication.OAuth2AuthenticationProvider;
+import com.gwkim.security.oauth2.core.authentication.userdetails.service.CustomOAuth2UserService;
 import com.gwkim.security.oauth2.core.exception.CustomAccessDeniedHandler;
 import com.gwkim.security.oauth2.core.exception.CustomAuthenticationEntryPoint;
 import com.gwkim.security.oauth2.core.filter.OAuth2JwtAuthenticationFilter;
@@ -8,6 +9,7 @@ import com.gwkim.security.oauth2.core.filter.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -33,6 +35,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtTokenProvider tokenProvider;
+    private final CustomOAuth2UserService oAuth2UserService;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -59,7 +62,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        OAuth2AuthenticationProvider provider = new OAuth2AuthenticationProvider();
+        OAuth2AuthenticationProvider provider = new OAuth2AuthenticationProvider(oAuth2UserService);
 //        provider.setPreAuthenticationChecks(preUserDetailsChecker());
         return provider;
     }
@@ -94,8 +97,9 @@ public class SecurityConfig {
 //                );
 
         // 2. 필터 설정 (custom jwt filter)
-        http
-                .addFilterBefore(new OAuth2JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+//        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+//        http
+//                .addFilterBefore(new OAuth2JwtAuthenticationFilter(authenticationManager, tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         // 2. 인증(authentication) & 인가(authorization) 예외 핸들링
         http
@@ -104,7 +108,32 @@ public class SecurityConfig {
                         .accessDeniedHandler(new CustomAccessDeniedHandler())             // 인가
                 );
 
+        http
+                .with(new CustomFilterConfigurer(), CustomFilterConfigurer::build);
 
         return http.build();
+    }
+
+    public class CustomFilterConfigurer extends AbstractHttpConfigurer<CustomFilterConfigurer, HttpSecurity>{
+        public void configure(HttpSecurity http) throws Exception {
+            AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+            OAuth2JwtAuthenticationFilter jwtAuthenticationFilter = new OAuth2JwtAuthenticationFilter(authenticationManager, tokenProvider);
+
+//            jwtAuthenticationFilter.setFilterProcessesUrl("/auth/login");
+//            jwtAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler());
+//            jwtAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
+
+            http
+                    // 시큐리티 필터 체인이 모든 필터의 우선 순위를 가진다
+                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//                    .addFilter(new JwtVerificationFilter(authenticationManager, jwtTokenProvider));
+
+            super.configure(http);
+
+        }
+
+        public HttpSecurity build() {
+            return getBuilder();
+        }
     }
 }

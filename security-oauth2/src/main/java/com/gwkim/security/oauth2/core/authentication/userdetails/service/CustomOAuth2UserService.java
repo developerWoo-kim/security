@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomOAuth2UserService implements UserDetailsService {
-    @Override
+public class CustomOAuth2UserService {
+
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
     }
