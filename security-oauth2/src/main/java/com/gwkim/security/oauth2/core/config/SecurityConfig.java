@@ -1,11 +1,16 @@
 package com.gwkim.security.oauth2.core.config;
 
+import com.gwkim.security.oauth2.core.authentication.OAuth2AuthenticationProvider;
 import com.gwkim.security.oauth2.core.exception.CustomAccessDeniedHandler;
 import com.gwkim.security.oauth2.core.exception.CustomAuthenticationEntryPoint;
-import com.gwkim.security.oauth2.core.userdetails.CustomOAuth2UserService;
+import com.gwkim.security.oauth2.core.filter.OAuth2JwtAuthenticationFilter;
+import com.gwkim.security.oauth2.core.filter.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -13,6 +18,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -23,8 +30,9 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
-    private final CustomOAuth2UserService customOAuth2UserService;
+    private final JwtTokenProvider tokenProvider;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -32,6 +40,7 @@ public class SecurityConfig {
                 "/example"
         );
     }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -46,6 +55,13 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        OAuth2AuthenticationProvider provider = new OAuth2AuthenticationProvider();
+//        provider.setPreAuthenticationChecks(preUserDetailsChecker());
+        return provider;
     }
 
     @Bean
@@ -68,14 +84,18 @@ public class SecurityConfig {
                 );
 
         // 2. oauth2 로그인 설정
-        http
-                .oauth2Login(httpSecurityOAuth2LoginConfigurer ->
-                        httpSecurityOAuth2LoginConfigurer
-                                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                                        .userService(customOAuth2UserService))
-                );
+//        http
+//                .oauth2Login(httpSecurityOAuth2LoginConfigurer ->
+//                        httpSecurityOAuth2LoginConfigurer
+//                                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
+//                                        .userService(customOAuth2UserService))
+//
+//
+//                );
 
         // 2. 필터 설정 (custom jwt filter)
+        http
+                .addFilterBefore(new OAuth2JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         // 2. 인증(authentication) & 인가(authorization) 예외 핸들링
         http
