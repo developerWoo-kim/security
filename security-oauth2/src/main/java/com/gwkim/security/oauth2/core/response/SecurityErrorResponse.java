@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class SecurityErrorResponse extends GlobalErrorResponse {
+
+    @Builder
     public SecurityErrorResponse(String code, String message, String path) {
         super(code, message, path);
     }

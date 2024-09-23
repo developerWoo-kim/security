@@ -2,6 +2,8 @@ package com.gwkim.security.oauth2.core.filter.jwt;
 
 import com.gwkim.security.oauth2.core.filter.jwt.dto.AccessTokenDto;
 import com.gwkim.security.oauth2.core.filter.jwt.dto.TokenDto;
+import com.gwkim.security.oauth2.core.response.SecurityError;
+import com.gwkim.security.oauth2.core.response.exception.JwtSecurityException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
@@ -151,15 +153,12 @@ public class JwtTokenProvider {
                     .setSigningKey(this.key).build()
                     .parseClaimsJwt(token).getBody();
         } catch (ExpiredJwtException e) {
-            return e.getClaims();
+            throw new JwtSecurityException(SecurityError.CMM_AUTH_TOKEN_EXPIRED);
+//            return e.getClaims();
         } catch (MalformedJwtException e) {
             System.out.println(e.getMessage());
 //            throw new TokenException(INVALID_TOKEN);
-            throw new RuntimeException();
-        } catch (SecurityException e) {
-            System.out.println(e.getMessage());
-//            throw new TokenException(INVALID_JWT_SIGNATURE);
-            throw new RuntimeException();
+            throw new JwtSecurityException(SecurityError.CMM_AUTH_FAIL);
         }
     }
 
@@ -193,7 +192,7 @@ public class JwtTokenProvider {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
         }
-        throw new RuntimeException();
+        throw new JwtSecurityException(SecurityError.CMM_AUTH_FAIL);
     }
 
     /**

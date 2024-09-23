@@ -18,7 +18,6 @@ public class GlobalErrorResponse {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<ValidationError> errors = new ArrayList<>();
 
-    @Builder
     public GlobalErrorResponse(String code, String message, String path, List<ValidationError> errors) {
         this.code = code;
         this.message = message;

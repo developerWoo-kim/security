@@ -16,6 +16,7 @@ public enum JwtTokenExceptionTypes {
     ExpiredJwtException(SecurityError.CMM_AUTH_TOKEN_EXPIRED),
     UnsupportedJwtException(SecurityError.CMM_AUTH_TOKEN_UNSUPPORTED),
     IllegalArgumentException(SecurityError.CMM_AUTH_TOKEN_ILLEGAL_ARGUMENT),
+    AUTHENTICATION_FAIL_EXCEPTION(SecurityError.CMM_AUTH_FAIL),
     SignatureException(SecurityError.CMM_AUTH_TOKEN_ILLEGAL_ARGUMENT);
 
     private final SecurityError error;

@@ -4,6 +4,9 @@ import com.gwkim.security.oauth2.core.authentication.OAuth2AuthenticationProvide
 import com.gwkim.security.oauth2.core.authentication.userdetails.service.CustomOAuth2UserService;
 import com.gwkim.security.oauth2.core.exception.CustomAccessDeniedHandler;
 import com.gwkim.security.oauth2.core.exception.CustomAuthenticationEntryPoint;
+import com.gwkim.security.oauth2.core.exception.CustomAuthenticationFailureHandler;
+import com.gwkim.security.oauth2.core.exception.CustomAuthenticationSuccessHandler;
+import com.gwkim.security.oauth2.core.filter.JwtVerificationFilter;
 import com.gwkim.security.oauth2.core.filter.OAuth2JwtAuthenticationFilter;
 import com.gwkim.security.oauth2.core.filter.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -67,6 +71,7 @@ public class SecurityConfig {
         return provider;
     }
 
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // 1. 기본 설정
@@ -85,16 +90,6 @@ public class SecurityConfig {
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 사용 안함
                 );
-
-        // 2. oauth2 로그인 설정
-//        http
-//                .oauth2Login(httpSecurityOAuth2LoginConfigurer ->
-//                        httpSecurityOAuth2LoginConfigurer
-//                                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-//                                        .userService(customOAuth2UserService))
-//
-//
-//                );
 
         // 2. 필터 설정 (custom jwt filter)
 //        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
@@ -120,13 +115,13 @@ public class SecurityConfig {
             OAuth2JwtAuthenticationFilter jwtAuthenticationFilter = new OAuth2JwtAuthenticationFilter(authenticationManager, tokenProvider);
 
 //            jwtAuthenticationFilter.setFilterProcessesUrl("/auth/login");
-//            jwtAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler());
-//            jwtAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
+            jwtAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler(tokenProvider));
+            jwtAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
 
             http
                     // 시큐리티 필터 체인이 모든 필터의 우선 순위를 가진다
-                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//                    .addFilter(new JwtVerificationFilter(authenticationManager, jwtTokenProvider));
+                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                    .addFilter(new JwtVerificationFilter(authenticationManager, tokenProvider));
 
             super.configure(http);
 

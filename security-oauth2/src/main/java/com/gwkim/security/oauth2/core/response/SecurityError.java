@@ -19,6 +19,7 @@ public enum SecurityError {
     CMM_AUTH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "auth-010", "만료된 토큰입니다."),
     CMM_AUTH_TOKEN_UNSUPPORTED(HttpStatus.UNAUTHORIZED, "auth-011", "지원하지 않는 토큰입니다."),
     CMM_AUTH_TOKEN_ILLEGAL_ARGUMENT(HttpStatus.UNAUTHORIZED, "auth-012", "시그니처 검증에 실패했습니다."),
+    CMM_AUTH_FAIL(HttpStatus.UNAUTHORIZED, "auth-020", "인증 실패하였습니다."),
     ;
 
     private HttpStatus status;

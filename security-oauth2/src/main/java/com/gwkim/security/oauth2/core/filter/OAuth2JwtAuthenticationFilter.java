@@ -4,11 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gwkim.security.oauth2.core.authentication.dto.OAuth2LoginDto;
 import com.gwkim.security.oauth2.core.authentication.userdetails.CustomOAuth2AuthenticationToken;
 import com.gwkim.security.oauth2.core.authentication.userdetails.CustomOAuth2User;
+import com.gwkim.security.oauth2.core.authentication.userdetails.OAuth2UserInfo;
 import com.gwkim.security.oauth2.core.filter.jwt.JwtTokenProvider;
+import com.gwkim.security.oauth2.core.filter.jwt.dto.TokenDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -36,12 +40,6 @@ public class OAuth2JwtAuthenticationFilter extends AbstractAuthenticationProcess
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public OAuth2JwtAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationManager authenticationManager1, JwtTokenProvider jwtTokenProvider) {
-        super(DEFAULT_ANT_PATH_REQUEST_MATCHER, authenticationManager);
-        this.authenticationManager = authenticationManager1;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
@@ -50,29 +48,44 @@ public class OAuth2JwtAuthenticationFilter extends AbstractAuthenticationProcess
 
         String token = loginDto.getAccessToken();
         String header = loginDto.getOauth2Type().getType() + " " + token;
+//        String header = "";
         String apiURL = loginDto.getOauth2Type().getUrl();
 
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put(loginDto.getOauth2Type().getHeader(), header);
         String responseBody = get(apiURL, requestHeaders);
+        System.out.println(responseBody);
 
-
-        Map<String, Object> attributes = new HashMap<>();
-        attributes.put("id", "test001");
-        CustomOAuth2User key = new CustomOAuth2User(attributes, "key");
-        CustomOAuth2AuthenticationToken authenticationToken = new CustomOAuth2AuthenticationToken(key);
+        Map<String, Object> responseBodyMap = objectMapper.readValue(responseBody, Map.class);
+        Map<String, Object> result = (Map<String, Object>) responseBodyMap.get("response");
+        CustomOAuth2AuthenticationToken authenticationToken = new CustomOAuth2AuthenticationToken(result);
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 
 
-
-        System.out.println(responseBody);
-        return null;
+        return authenticate;
     }
 
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication auth) throws IOException, ServletException {
-
-    }
+//    @Override
+//    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication auth) throws IOException, ServletException {
+//        System.out.println("successfulAuthentication ::::: ");
+//        CustomOAuth2AuthenticationToken oAuth2UserInfo = (CustomOAuth2AuthenticationToken) auth;
+//        CustomOAuth2User principal = (CustomOAuth2User) oAuth2UserInfo.getPrincipal();
+//        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(principal.getUserInfo().id());
+//
+//        jwtTokenProvider.setAccessTokenHeader(tokenDto.getAccessToken(), response);
+//        jwtTokenProvider.setRefreshTokenHeader(tokenDto.getRefreshToken(), response);
+//
+//        ObjectMapper om = new ObjectMapper();
+//        String result = om.writeValueAsString(tokenDto);
+//
+//        response.setCharacterEncoding("utf-8");
+//        response.setStatus(HttpStatus.OK.value());
+//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//        response.getWriter().write(result);
+//
+//        this.getSuccessHandler().onAuthenticationSuccess(request, response, auth);
+//
+//    }
 
     private static String get(String apiUrl, Map<String, String> requestHeaders){
         HttpURLConnection con = connect(apiUrl);
