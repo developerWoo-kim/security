@@ -28,6 +28,6 @@ spring:
 jwt:
   secret-key: 'fa5e2d1c7e68b4173f7099a756a243d2b84e3a3d1c4b6f0ed9e4bebf4682d22f'
   refresh-token-expiration-millis: 31536000000 #86400000
-#  access-token-expiration-millis: 86400000 #3600000
-  access-token-expiration-millis: 5000 #3600000
+  access-token-expiration-millis: 86400000 #3600000
+#  access-token-expiration-millis: 5000 #3600000
 

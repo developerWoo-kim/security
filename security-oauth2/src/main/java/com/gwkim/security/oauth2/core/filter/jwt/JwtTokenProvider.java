@@ -151,7 +151,7 @@ public class JwtTokenProvider {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(this.key).build()
-                    .parseClaimsJwt(token).getBody();
+                    .parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
             throw new JwtSecurityException(SecurityError.CMM_AUTH_TOKEN_EXPIRED);
 //            return e.getClaims();

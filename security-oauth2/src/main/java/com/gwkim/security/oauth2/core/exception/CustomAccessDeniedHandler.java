@@ -18,11 +18,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception)
             throws IOException {
-        ObjectMapper om = new ObjectMapper();
-
         SecurityErrorResponse commonErrorResponse = new SecurityErrorResponse(CMM_AUTH_ROLE_NOT_FOUND.getCode(), CMM_AUTH_ROLE_NOT_FOUND.getMessage(), request.getRequestURI());
-
-
+        ObjectMapper om = new ObjectMapper();
         response.setCharacterEncoding("utf-8");
         response.setStatus(CMM_AUTH_ROLE_NOT_FOUND.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

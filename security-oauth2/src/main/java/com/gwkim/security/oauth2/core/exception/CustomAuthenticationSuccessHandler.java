@@ -31,7 +31,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         log.debug("로그인 성공 : >>>>");
         CustomOAuth2AuthenticationToken oAuth2UserInfo = (CustomOAuth2AuthenticationToken) authentication;
         CustomOAuth2User principal = (CustomOAuth2User) oAuth2UserInfo.getPrincipal();

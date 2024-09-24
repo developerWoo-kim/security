@@ -23,7 +23,7 @@ public class CustomOAuth2UserService {
         SecurityUser findUser = securityUserUseCase.findById(oAuth2UserInfo.id());
 
         if(findUser == null) {
-            SecurityUserSaveForm build = new SecurityUserSaveForm().builder()
+            SecurityUserSaveForm build = SecurityUserSaveForm.builder()
                     .id(oAuth2UserInfo.id())
                     .name(oAuth2UserInfo.name())
                     .mobile(oAuth2UserInfo.mobile())

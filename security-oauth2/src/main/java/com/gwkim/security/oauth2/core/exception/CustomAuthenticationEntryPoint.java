@@ -17,7 +17,7 @@ import static com.gwkim.security.oauth2.core.response.SecurityError.CMM_AUTH_ROL
 
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         AuthenticationExceptionTypes exceptionTypes = AuthenticationExceptionTypes.findOf(authException.getClass().getSimpleName());
 
         ObjectMapper om = new ObjectMapper();

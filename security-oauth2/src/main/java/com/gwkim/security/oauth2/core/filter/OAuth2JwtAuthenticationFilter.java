@@ -32,12 +32,10 @@ import java.util.Map;
 public class OAuth2JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/login", "POST");
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public OAuth2JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
+    public OAuth2JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
         this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
 
@@ -58,9 +56,9 @@ public class OAuth2JwtAuthenticationFilter extends AbstractAuthenticationProcess
 
         Map<String, Object> responseBodyMap = objectMapper.readValue(responseBody, Map.class);
         Map<String, Object> result = (Map<String, Object>) responseBodyMap.get("response");
+
         CustomOAuth2AuthenticationToken authenticationToken = new CustomOAuth2AuthenticationToken(result);
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
-
 
         return authenticate;
     }
